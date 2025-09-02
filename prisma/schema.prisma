@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model AppSettings {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model User {
+  id         String    @id @default(uuid())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  name       String
+  username   String    @unique
+  password   String
+  avatar     String?
+  last_login DateTime?
+  role       Role
+
+  attendances Attendance[]
+  permission  Permission[]
+}
+
+model ValidQRCode {
+  id String @id
+}
+
+model Attendance {
+  id Int @id @default(autoincrement())
+
+  date DateTime @default(now())
+
+  clock_in_at  String?
+  clock_out_at String?
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  overtime_hours Float?
+
+  status AttendanceStatus
+
+  @@unique([date, user_id])
+}
+
+enum AttendanceStatus {
+  ATTEND
+  ABSENT
+  EXCUSED
+  LATE
+  OVERTIME
+}
+
+model Permission {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  reason     String
+  days_count Int
+  proof      String?
+  status     PermissionStatus @default(PENDING)
+  type       PermissionType
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  date_start DateTime
+  date_end   DateTime
+}
+
+enum PermissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PermissionType {
+  FULL
+  EARLY_LEAVE
+  LATE
+}
+
+enum Role {
+  admin
+  employee
+}

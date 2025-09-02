@@ -1,0 +1,35 @@
+perbaiki fungsi login menggunakan prisma admin
+
+perbaiki fungsi hapus prajurit
+
+buat parameter tambahan untuk path upload pada storage service
+
+fix breadcrumb pada create dan edit prajurit
+
+gunakan kembali createPrajurit untuk create user, buat role pada schema
+
+perbaiki fungsi create user dan edit user
+
+terapkan refresh token dan access token pada login
+
+- buat halaman untuk seluruh not found resource (prajurit, berita, user, kesatuan) gunakan komponen yang telah dibuat
+
+- prune terlebih dahulu karena sudahka uninstall react-query
+
+- perbaiki mengapa ketika mengubah avatar menambahkan tanda '/' diawal /uploads/avatar/78842536292567_2025-07-22T17-30-31-889Z_bb580ae0-51fe-4afb-b366-8852702c109b.jpg
+
+- periksa yang mana benar pada penerapan aplikasi apakah menggunakan '/' ketika memanggil gambar atau tidak
+
+- buat fungsi untuk input data garjas
+
+- fix fungsi endpoint hitung garjas gunakan juga nilai renang
+
+- fix import pada form penilaian, gunakan relative imports
+
+- hapus latihan satuan yang sudah ada di database prod
+
+- terapkan audit logging untuk semua aksi aplikasi yang krusial
+
+- fix input kesatuan
+
+- todo fix ambil pangkat name dari prajurit id, gunakan input text biasa
