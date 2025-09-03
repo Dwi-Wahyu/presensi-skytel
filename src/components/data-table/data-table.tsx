@@ -33,8 +33,6 @@ export function DataTable<TData>({
   className,
   ...props
 }: DataTableProps<TData>) {
-  const pageSizeOptions = [10, 20, 30, 40, 50];
-
   return (
     <div
       className={cn("flex w-full flex-col gap-2.5 overflow-auto", className)}

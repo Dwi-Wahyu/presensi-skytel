@@ -87,8 +87,8 @@ export async function seedAttendance() {
           date: new Date(date),
           user_id: user.id,
           status,
-          clock_in_at: `0${clock_in_at}:00`,
-          clock_out_at: `0${clock_out_at}:00`,
+          clock_in_at,
+          clock_out_at,
           overtime_hours,
         });
       }
