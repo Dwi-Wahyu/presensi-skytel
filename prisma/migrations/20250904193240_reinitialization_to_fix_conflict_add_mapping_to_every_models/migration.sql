@@ -1,15 +1,15 @@
 -- CreateTable
-CREATE TABLE `AppSettings` (
+CREATE TABLE `app_settings` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `key` VARCHAR(191) NOT NULL,
     `value` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `AppSettings_key_key`(`key`),
+    UNIQUE INDEX `app_settings_key_key`(`key`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `User` (
+CREATE TABLE `user` (
     `id` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
@@ -23,12 +23,12 @@ CREATE TABLE `User` (
     `phone_number` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `User_username_key`(`username`),
+    UNIQUE INDEX `user_username_key`(`username`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Notification` (
+CREATE TABLE `notification` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
@@ -39,13 +39,13 @@ CREATE TABLE `Notification` (
     `recipient_id` VARCHAR(191) NOT NULL,
     `sender_id` VARCHAR(191) NULL,
 
-    INDEX `Notification_recipient_id_idx`(`recipient_id`),
-    INDEX `Notification_sender_id_idx`(`sender_id`),
+    INDEX `notification_recipient_id_idx`(`recipient_id`),
+    INDEX `notification_sender_id_idx`(`sender_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Attendance` (
+CREATE TABLE `attendance` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `clock_in_at` DATETIME(3) NULL,
@@ -54,12 +54,12 @@ CREATE TABLE `Attendance` (
     `overtime_hours` DOUBLE NULL,
     `status` ENUM('ATTEND', 'ABSENT', 'EXCUSED') NOT NULL,
 
-    UNIQUE INDEX `Attendance_date_user_id_key`(`date`, `user_id`),
+    UNIQUE INDEX `attendance_date_user_id_key`(`date`, `user_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Permission` (
+CREATE TABLE `permission` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
@@ -78,13 +78,13 @@ CREATE TABLE `Permission` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Notification` ADD CONSTRAINT `Notification_recipient_id_fkey` FOREIGN KEY (`recipient_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `notification` ADD CONSTRAINT `notification_recipient_id_fkey` FOREIGN KEY (`recipient_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Notification` ADD CONSTRAINT `Notification_sender_id_fkey` FOREIGN KEY (`sender_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `notification` ADD CONSTRAINT `notification_sender_id_fkey` FOREIGN KEY (`sender_id`) REFERENCES `user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Attendance` ADD CONSTRAINT `Attendance_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `attendance` ADD CONSTRAINT `attendance_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Permission` ADD CONSTRAINT `Permission_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `permission` ADD CONSTRAINT `permission_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
