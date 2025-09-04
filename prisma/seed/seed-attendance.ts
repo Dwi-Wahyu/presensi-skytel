@@ -15,41 +15,50 @@ function getWeekdaysInMonth(year: number, month: number) {
   return dates;
 }
 
-function getRandomTime(startHour: number, endHour: number): string {
+/**
+ * Mendapatkan waktu acak dalam bentuk objek Date untuk hari tertentu.
+ */
+function getRandomTime(
+  baseDate: Date,
+  startHour: number,
+  endHour: number
+): Date {
   const hour =
     Math.floor(Math.random() * (endHour - startHour + 1)) + startHour;
   const minute = Math.floor(Math.random() * 60);
-  return `${hour.toString().padStart(2, "0")}:${minute
-    .toString()
-    .padStart(2, "0")}`;
+  const result = new Date(baseDate);
+  result.setHours(hour, minute, 0, 0);
+  return result;
 }
 
-function getRandomAttendanceData() {
+/**
+ * Mendapatkan data kehadiran acak, termasuk waktu masuk dan keluar dalam bentuk Date.
+ */
+function getRandomAttendanceData(baseDate: Date) {
   const statuses = [
     AttendanceStatus.ATTEND,
     AttendanceStatus.ABSENT,
-    AttendanceStatus.LATE,
     AttendanceStatus.EXCUSED,
   ];
   const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
 
   let clockInAt = null;
   let clockOutAt = null;
-  let overtimeHours = null;
 
-  if (
-    randomStatus === AttendanceStatus.ATTEND ||
-    randomStatus === AttendanceStatus.LATE
-  ) {
-    clockInAt = getRandomTime(8, 10);
-    clockOutAt = getRandomTime(15, 17);
+  if (randomStatus === AttendanceStatus.ATTEND) {
+    // Generate valid clock in and out times
+    clockInAt = getRandomTime(baseDate, 8, 9);
+    clockOutAt = getRandomTime(baseDate, 17, 18);
+  } else if (randomStatus === AttendanceStatus.ABSENT) {
+    // Leave clockInAt and clockOutAt as null
+  } else if (randomStatus === AttendanceStatus.EXCUSED) {
+    // Can optionally have times if excused, but for simplicity, leave null
   }
 
   return {
     status: randomStatus,
     clock_in_at: clockInAt,
     clock_out_at: clockOutAt,
-    overtime_hours: overtimeHours,
   };
 }
 
@@ -80,8 +89,8 @@ export async function seedAttendance() {
 
     for (const user of allUsers) {
       for (const date of weekdaysInMonth) {
-        const { status, clock_in_at, clock_out_at, overtime_hours } =
-          getRandomAttendanceData();
+        const { status, clock_in_at, clock_out_at } =
+          getRandomAttendanceData(date);
 
         attendanceData.push({
           date: new Date(date),
@@ -89,7 +98,6 @@ export async function seedAttendance() {
           status,
           clock_in_at,
           clock_out_at,
-          overtime_hours,
         });
       }
     }

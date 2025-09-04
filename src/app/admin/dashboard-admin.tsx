@@ -16,8 +16,10 @@ import { TopTenEmployeeChart } from "./top-ten-employee-chart";
 import { getTopTenEmployeesByAttendance } from "./kehadiran/queries";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
-import { formatDate } from "@/helper/date-helper";
 import { Badge } from "@/components/ui/badge";
+import { formatToHour } from "@/helper/hour-helper";
+import { AdminNotificationSection } from "./admin-notification-section";
+import { getNotifications } from "../notifikasi/queries";
 
 export async function DashboardAdmin() {
   const session = await auth();
@@ -53,6 +55,8 @@ export async function DashboardAdmin() {
       },
     },
   });
+
+  const recentNotifications = await getNotifications(session.user.id, 5);
 
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
 
@@ -135,9 +139,9 @@ export async function DashboardAdmin() {
 
                       <Badge variant={"outline"}>
                         {attendance.clock_out_at === null ? (
-                          <>{attendance.clock_in_at}</>
+                          <>{formatToHour(attendance.clock_in_at)}</>
                         ) : (
-                          <>{attendance.clock_out_at}</>
+                          <>{formatToHour(attendance.clock_out_at)}</>
                         )}
                       </Badge>
                     </div>
@@ -148,6 +152,8 @@ export async function DashboardAdmin() {
           </CardContent>
         </Card>
       </div>
+
+      <AdminNotificationSection notifications={recentNotifications} />
 
       <TopTenEmployeeChart data={topTenEmployeeByAttendance} />
     </div>

@@ -51,18 +51,35 @@ export async function getAttendancesData(input: AttendanceSearchParamsType) {
   return { data, pageCount, filtered };
 }
 
-export async function getAttendanceById(id: string) {
-  const prajurit = await prisma.user.findUnique({
-    where: { id, deleted_at: null },
+export async function getAttendanceById(id: number) {
+  const attendance = await prisma.attendance.findUnique({
+    where: { id, user: { deleted_at: null } },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
   });
-  return prajurit;
+  return attendance;
 }
 
 export async function getAllAttendance() {
-  return await prisma.user.findMany({
+  return await prisma.attendance.findMany({
     where: {
-      role: "employee",
-      deleted_at: null,
+      user: {
+        deleted_at: null,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 }

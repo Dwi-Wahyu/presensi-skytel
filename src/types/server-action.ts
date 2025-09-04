@@ -1,9 +1,6 @@
-// types/server-action.ts
-
 interface ActionSuccess<T = void> {
-  // Default T ke void
   success: true;
-  data?: T; // Jadikan data opsional
+  data?: T;
   message?: string;
 }
 
@@ -16,4 +13,4 @@ interface ActionError {
   };
 }
 
-export type ServerActionReturn<T = void> = ActionSuccess<T> | ActionError; // Default juga di sini
+export type ServerActionReturn<T = void> = ActionSuccess<T> | ActionError;

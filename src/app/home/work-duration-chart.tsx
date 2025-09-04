@@ -17,50 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { getWorkDurationData } from "./queries";
 
 export const description = "A bar chart with a label";
-
-// Fungsi untuk menghitung total menit dari jam masuk dan keluar
-const calculateWorkDuration = (clockIn: string, clockOut: string): number => {
-  const [inHour, inMinute] = clockIn.split(":").map(Number);
-  const [outHour, outMinute] = clockOut.split(":").map(Number);
-  const totalMinutes = outHour * 60 + outMinute - (inHour * 60 + inMinute);
-  return totalMinutes;
-};
-
-// Data yang telah diolah
-const chartData = [
-  {
-    month: "Senin",
-    clockIn: "08:42",
-    clockOut: "16:10",
-    workDuration: calculateWorkDuration("08:42", "16:10"),
-  },
-  {
-    month: "Selasa",
-    clockIn: "08:23",
-    clockOut: "16:32",
-    workDuration: calculateWorkDuration("08:23", "16:32"),
-  },
-  {
-    month: "Rabu",
-    clockIn: "08:16",
-    clockOut: "16:43",
-    workDuration: calculateWorkDuration("08:16", "16:43"),
-  },
-  {
-    month: "Kamis",
-    clockIn: "08:27",
-    clockOut: "16:23",
-    workDuration: calculateWorkDuration("08:27", "16:23"),
-  },
-  {
-    month: "Jumat",
-    clockIn: "08:01",
-    clockOut: "16:44",
-    workDuration: calculateWorkDuration("08:01", "16:44"),
-  },
-];
 
 const chartConfig = {
   workDuration: {
@@ -69,7 +28,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function JamKerjaChart() {
+export function WorkDurationChart({
+  data,
+}: {
+  data: Awaited<ReturnType<typeof getWorkDurationData>>;
+}) {
   return (
     <Card className="mt-7">
       <CardHeader className="flex justify-between items-center">
@@ -77,15 +40,10 @@ export function JamKerjaChart() {
           <CardTitle>Statistik Jam Kerja</CardTitle>
           <CardDescription>Senin - Jumat</CardDescription>
         </div>
-
-        <div className="text-sm flex items-center text-muted-foreground gap-1">
-          <AlertCircle width={15} height={15} />
-          <h1>Belum valid</h1>
-        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData} margin={{ top: 20 }}>
+          <BarChart accessibilityLayer data={data} margin={{ top: 20 }}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
@@ -94,10 +52,6 @@ export function JamKerjaChart() {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            {/* <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            /> */}
             <Bar dataKey="workDuration" fill="var(--color-chart-1)" radius={8}>
               <LabelList
                 position="top"
@@ -113,9 +67,9 @@ export function JamKerjaChart() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 leading-none font-medium">
+        {/* <div className="flex gap-2 leading-none font-medium">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
+        </div> */}
       </CardFooter>
     </Card>
   );

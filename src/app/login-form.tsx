@@ -69,24 +69,6 @@ export default function LoginForm({
 
       if (employeeAccount) {
         router.push("/home");
-
-        // const catat = await catatPresensi(data.username);
-
-        // if (!catat.success) {
-        //   return <GagalPresensi reason={catat.error.message} />;
-        // }
-
-        // if (!catat.data) {
-        //   return (
-        //     <GagalPresensi reason="Terjadi kesalahan saat menampilkan data presensi" />
-        //   );
-        // }
-
-        // if (catat.data.clockedOut) {
-        //   router.push("/home");
-        // }
-
-        // return <SuksesPresensi attendance={catat.data.attendance} />;
       } else {
         router.push("/admin");
       }
@@ -98,7 +80,7 @@ export default function LoginForm({
   return (
     <div
       className={cn(
-        "flex flex-col md:flex-row p-6 md:p-10 items-center min-h-screen md:justify-evenly gap-6 relative",
+        "flex flex-col md:flex-row p-6 md:p-10 items-center min-h-screen md:justify-evenly gap-9 relative",
         className
       )}
       {...props}
@@ -119,7 +101,7 @@ export default function LoginForm({
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">Selamat Datang</h1>
                   <p className="text-muted-foreground text-balance">
-                    Aplikasi Absensi Digital
+                    Aplikasi Presensi Digital
                   </p>
                 </div>
                 <FormField

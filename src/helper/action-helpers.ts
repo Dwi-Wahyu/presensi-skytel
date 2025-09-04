@@ -1,5 +1,3 @@
-// utils/action-helpers.ts
-
 import { ServerActionReturn } from "@/types/server-action";
 
 export function successResponse<T = void>(

@@ -16,16 +16,16 @@ import Link from "next/link";
 import { ToggleDarkMode } from "./toggle-darkmode";
 
 export default function TopbarAvatar() {
-  function handleLogout() {
-    signOut({
-      redirectTo: "/",
-    });
-  }
-
   const session = useSession();
 
   if (!session.data) {
     return null;
+  }
+
+  function handleLogout() {
+    signOut({
+      redirectTo: "/",
+    });
   }
 
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;

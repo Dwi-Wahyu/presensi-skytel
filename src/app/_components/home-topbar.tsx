@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { IconLogout } from "@tabler/icons-react";
 import { ScanQrCode } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { TopbarDrawer } from "./topbar-drawer";
 
 export function HomeTopbar() {
   function handleLogout() {
@@ -24,13 +25,7 @@ export function HomeTopbar() {
         </div>
       </div>
 
-      <div className="flex gap-2 items-center">
-        <ToggleDarkMode />
-
-        <Button variant={"outline"} size={"icon"} onClick={handleLogout}>
-          <IconLogout />
-        </Button>
-      </div>
+      <TopbarDrawer />
     </div>
   );
 }

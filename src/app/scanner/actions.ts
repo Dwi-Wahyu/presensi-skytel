@@ -1,17 +1,11 @@
 "use server";
 
 import { ServerActionReturn } from "@/types/server-action";
-import { TriggerAbsenServer } from "./queries";
-import { Attendance } from "../generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { errorResponse, successResponse } from "@/helper/action-helpers";
 import { auth } from "@/config/auth";
 import { formatToHour } from "@/helper/hour-helper";
 import { redirect } from "next/navigation";
-
-export async function TriggerAbsen(qrId: string) {
-  TriggerAbsenServer(qrId);
-}
 
 // Todo: terapkan pemeriksaan terlambat atau overtime dari app settings
 export async function catatPresensi(

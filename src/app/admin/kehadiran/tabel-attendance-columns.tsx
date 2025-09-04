@@ -14,6 +14,7 @@ import {
 
 import { formatDate } from "@/helper/date-helper";
 import { attendanceStatusMapping } from "@/constant/attendance-status-mapping";
+import { formatToHour } from "@/helper/hour-helper";
 
 export const TabelAttendanceColumns: ColumnDef<AttendanceColumnType>[] = [
   {
@@ -31,13 +32,13 @@ export const TabelAttendanceColumns: ColumnDef<AttendanceColumnType>[] = [
   {
     header: "Clock In",
     cell: function Cell({ row }) {
-      return <div>{row.original.clock_in_at}</div>;
+      return <div>{formatToHour(row.original.clock_in_at)}</div>;
     },
   },
   {
     header: "Clock Out",
     cell: function Cell({ row }) {
-      return <div>{row.original.clock_out_at}</div>;
+      return <div>{formatToHour(row.original.clock_out_at)}</div>;
     },
   },
   {
@@ -49,7 +50,7 @@ export const TabelAttendanceColumns: ColumnDef<AttendanceColumnType>[] = [
   {
     id: "actions",
     cell: function Cell({ row }) {
-      const employee = row.original.user;
+      const { id } = row.original;
 
       return (
         <>
@@ -62,12 +63,12 @@ export const TabelAttendanceColumns: ColumnDef<AttendanceColumnType>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href={`/admin/karyawan/edit/${employee.id}`}>
+                <Link href={`/admin/kehadiran/edit/${id}`}>
                   <SquarePen className="mb-[1px] h-4 w-4" /> Edit
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/admin/karyawan/${employee.id}`}>
+                <Link href={`/admin/kehadiran/${id}`}>
                   <Eye className="mb-[1px] h-4 w-4" /> Detail
                 </Link>
               </DropdownMenuItem>

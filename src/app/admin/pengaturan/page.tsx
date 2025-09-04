@@ -22,8 +22,6 @@ export default async function SettingPage() {
     {} as Partial<AppSettings>
   ) as AppSettings;
 
-  console.log(settingsMap.CLOCK_IN_TIME);
-
   const {
     CLOCK_IN_TIME,
     CLOCK_OUT_TIME,

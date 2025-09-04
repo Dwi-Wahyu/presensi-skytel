@@ -24,7 +24,7 @@ export default function ScannerPage() {
   }
 
   return (
-    <div className="min-h-svh p-6 bg-gradient-to-t from-primary to-primary/50 flex flex-col w-full">
+    <div className="min-h-screen p-6 bg-gradient-to-t from-primary justify-center to-primary/50 flex flex-col w-full">
       <Card>
         <CardContent>
           <div className="mb-5 flex justify-between items-center">

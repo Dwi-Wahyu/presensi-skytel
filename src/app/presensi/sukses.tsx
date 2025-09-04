@@ -1,9 +1,12 @@
+import UnauthorizedPage from "@/app/_components/unauthorized-page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { auth } from "@/config/auth";
 import { formatDate } from "@/helper/date-helper";
 import { formatToHour } from "@/helper/hour-helper";
+import { prisma } from "@/lib/prisma";
 import {
   IconCircleDashedCheck,
   IconClipboardData,
@@ -12,25 +15,24 @@ import {
   IconDownload,
   IconHome,
 } from "@tabler/icons-react";
-import { getEmployeeAttendancesToday } from "./actions";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Attendance } from "../generated/prisma";
 
 export default async function SuksesPresensi({
   attendance,
 }: {
-  attendance: NonNullable<
-    Awaited<ReturnType<typeof getEmployeeAttendancesToday>>
-  >;
+  attendance: Attendance;
 }) {
   return (
     <div className="w-full relative min-h-svh bg-primary text-primary-foreground p-6 md:p-10 flex flex-col justify-center">
       <div className="flex w-full justify-between absolute top-0 left-0 p-6">
-        <Button asChild variant={"outline"} size={"lg"}>
+        <Button asChild variant={"ghost"} size={"icon"}>
           <Link href={"/home"}>
             <IconHome />
           </Link>
         </Button>
-        <Button asChild variant={"outline"} size={"lg"}>
+        <Button asChild variant={"ghost"} size={"icon"}>
           <Link href={"/presensi/history"}>
             <IconClipboardData />
           </Link>
@@ -69,7 +71,7 @@ export default async function SuksesPresensi({
                 Clock In
               </Badge>
               <h1 className="text-muted-foreground">
-                {attendance.clock_in_at}
+                {formatToHour(attendance.clock_in_at)}
               </h1>
             </div>
             <div className="flex gap-2">
@@ -78,7 +80,7 @@ export default async function SuksesPresensi({
                 Clock Out
               </Badge>
               <h1 className="text-muted-foreground">
-                {attendance.clock_out_at}
+                {formatToHour(attendance.clock_out_at)}
               </h1>
             </div>
           </div>

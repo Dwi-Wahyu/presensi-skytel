@@ -2,11 +2,11 @@ import { auth } from "@/config/auth";
 import { HomeTopbar } from "../_components/home-topbar";
 import { HomeNavSection } from "./home-nav-section";
 import UnauthorizedPage from "../_components/unauthorized-page";
-import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
-import { JamKerjaChart } from "./jam-kerja-chart";
-import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { WorkDurationChart } from "./work-duration-chart";
+import { NotificationSection } from "../notifikasi/notification-section";
+import { getNotifications } from "../notifikasi/queries";
+import { ToggleDarkMode } from "@/components/toggle-darkmode";
+import { getWorkDurationData } from "./queries";
 
 export default async function Home() {
   const session = await auth();
@@ -16,6 +16,10 @@ export default async function Home() {
   }
 
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
+
+  const recentNotifications = await getNotifications(session.user.id, 3);
+
+  const workDurationData = await getWorkDurationData(session.user.id);
 
   return (
     <div className="flex relative pt-20 flex-col gap-10 items-center w-full h-svh">
@@ -40,14 +44,17 @@ export default async function Home() {
             </div>
           </div>
 
-          <Button variant={"outline"} size={"icon"}>
-            <Settings />
-          </Button>
+          <ToggleDarkMode />
         </div>
 
         <HomeNavSection />
 
-        <JamKerjaChart />
+        <NotificationSection
+          notifications={recentNotifications}
+          user_id={session.user.id}
+        />
+
+        <WorkDurationChart data={workDurationData} />
       </div>
     </div>
   );

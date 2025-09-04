@@ -47,11 +47,7 @@ export function ConfirmationDialog({
         </DialogHeader>
         <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2">
           {" "}
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="w-full sm:w-auto rounded-full bg-card-foreground text-card hover:text-background hover:bg-card-foreground/90"
-          >
+          <Button variant="outline" onClick={onClose}>
             {cancelButtonText}
           </Button>
           <Button

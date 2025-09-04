@@ -25,8 +25,8 @@ export const adminMenu = {
       icon: IconClipboardData,
     },
     {
-      title: "Permohonan Izin",
-      url: "/admin/permohonan-izin",
+      title: "Pengajuan Izin",
+      url: "/admin/pengajuan-izin",
       icon: Mails,
     },
     {

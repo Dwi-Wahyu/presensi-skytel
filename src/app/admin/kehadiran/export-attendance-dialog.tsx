@@ -19,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { ExportAttendanceData } from "./actions";
 import { toast } from "sonner";
+import { redirect } from "next/navigation";
+import { Loader } from "lucide-react";
 
 const exportSchema = z.object({
   startDate: z.string().min(1, "Tanggal mulai wajib diisi."),
@@ -49,6 +51,7 @@ export function ExportAttendanceDialog() {
       toast.success("Berhasil export data");
       setLoading(false);
       setOpen(false);
+      if (result.filePath) redirect(result.filePath);
     } else {
       console.error(result.message);
       toast.error("Terjadi kesalahan saat export data");
@@ -69,7 +72,7 @@ export function ExportAttendanceDialog() {
           <DialogHeader>
             <DialogTitle>Export Data Kehadiran</DialogTitle>
             <DialogDescription>
-              Pilih dari tanggal hingga tanggal berapa untuk export data
+              Tentukan rentang tanggal data kehadiran yang ingin Anda ekspor
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -87,7 +90,7 @@ export function ExportAttendanceDialog() {
               )}
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="endDate">Sampai</Label>
+              <Label htmlFor="endDate">Hingga</Label>
               <Input type="date" id="endDate" {...form.register("endDate")} />
               {form.formState.errors.endDate && (
                 <p className="text-sm text-red-500">
@@ -104,7 +107,17 @@ export function ExportAttendanceDialog() {
             >
               Batalkan
             </Button>
-            <Button type="submit">Export</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader className="animate-spin" /> Loading
+                </>
+              ) : (
+                <>
+                  <IconFileTypeXls /> Export
+                </>
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

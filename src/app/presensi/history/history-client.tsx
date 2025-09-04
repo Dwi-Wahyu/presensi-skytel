@@ -7,6 +7,7 @@ import { formatDate } from "@/helper/date-helper";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { AlarmClockOff, ClockPlus, Mail } from "lucide-react";
 import { attendanceStatusMapping } from "@/constant/attendance-status-mapping";
+import { formatToHour } from "@/helper/hour-helper";
 
 export function HistoryPresensiClient({
   attendances,
@@ -14,7 +15,7 @@ export function HistoryPresensiClient({
   attendances: Attendance[];
 }) {
   return (
-    <ScrollArea className="h-[45vh]">
+    <ScrollArea className="h-[55vh]">
       {attendances.map((attendance, idx) => (
         <div
           key={idx}
@@ -23,9 +24,14 @@ export function HistoryPresensiClient({
           <div>
             <h1 className=" font-semibold">{formatDate(attendance.date)}</h1>
 
-            <h1 className="">
-              {attendance.clock_in_at} - {attendance.clock_out_at}{" "}
-            </h1>
+            {attendance.status === "ATTEND" ? (
+              <h1 className="">
+                {formatToHour(attendance.clock_in_at)} -{" "}
+                {formatToHour(attendance.clock_out_at)}{" "}
+              </h1>
+            ) : (
+              <h1>-</h1>
+            )}
           </div>
 
           <Badge
@@ -36,10 +42,6 @@ export function HistoryPresensiClient({
             {attendance.status === "ABSENT" && <IconX />}
 
             {attendance.status === "EXCUSED" && <Mail />}
-
-            {attendance.status === "LATE" && <AlarmClockOff />}
-
-            {attendance.status === "OVERTIME" && <ClockPlus />}
 
             {attendanceStatusMapping[attendance.status]}
           </Badge>

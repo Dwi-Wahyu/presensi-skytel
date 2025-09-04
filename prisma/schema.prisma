@@ -27,12 +27,36 @@ model User {
   last_login DateTime?
   role       Role
 
+  phone_number String?
+  email        String?
+
   attendances Attendance[]
   permission  Permission[]
+
+  received_notifications Notification[] @relation("ReceivedNotifications")
+
+  sent_notifications Notification[] @relation("SentNotifications")
 }
 
-model ValidQRCode {
-  id String @id
+model Notification {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  resource_path String?
+
+  title   String
+  message String  @db.Text
+  read    Boolean @default(false)
+
+  recipient_id String
+  recipient    User   @relation(name: "ReceivedNotifications", fields: [recipient_id], references: [id])
+
+  sender_id String?
+  sender    User?   @relation(name: "SentNotifications", fields: [sender_id], references: [id])
+
+  @@index([recipient_id])
+  @@index([sender_id])
 }
 
 model Attendance {
@@ -40,8 +64,8 @@ model Attendance {
 
   date DateTime @default(now())
 
-  clock_in_at  String?
-  clock_out_at String?
+  clock_in_at  DateTime?
+  clock_out_at DateTime?
 
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
@@ -57,8 +81,6 @@ enum AttendanceStatus {
   ATTEND
   ABSENT
   EXCUSED
-  LATE
-  OVERTIME
 }
 
 model Permission {
@@ -72,6 +94,8 @@ model Permission {
   proof      String?
   status     PermissionStatus @default(PENDING)
   type       PermissionType
+
+  rejected_reason String?
 
   user    User   @relation(fields: [user_id], references: [id])
   user_id String

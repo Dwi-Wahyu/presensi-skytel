@@ -41,16 +41,13 @@ export async function seedUsers() {
       avatar: DEFAULT_AVATAR,
     });
 
-    for (let i = 0; i < 10; i++) {
-      const name = faker.person.fullName();
-      usersToSeed.push({
-        name: name,
-        username: faker.internet.userName({ firstName: name }),
-        password: hashedPasswordEmployee,
-        role: Role.employee,
-        avatar: DEFAULT_AVATAR,
-      });
-    }
+    usersToSeed.push({
+      name: "Dwi Wahyu Ilahi",
+      username: "wahyu",
+      password: hashedPasswordAdmin,
+      role: Role.employee,
+      avatar: DEFAULT_AVATAR,
+    });
 
     const userCreationPromises = usersToSeed.map(async (userData) => {
       await prisma.user.upsert({

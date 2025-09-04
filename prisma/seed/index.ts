@@ -4,8 +4,8 @@ import { seedSettings } from "./seed-settings";
 import { seedAttendance } from "./seed-attendance";
 
 async function main() {
-  // await seedUsers();
-  // await seedSettings();
+  await seedUsers();
+  await seedSettings();
   await seedAttendance();
 }
 

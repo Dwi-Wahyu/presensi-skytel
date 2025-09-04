@@ -38,9 +38,7 @@ export default async function AttendanceHistoryPage() {
   }
 
   return (
-    <div className="w-full relative min-h-svh  text-primary-foreground p-6 md:p-10 flex flex-col justify-center">
-      <div className="absolute w-full h-[50vh] z-0 bg-gradient-to-b from-primary to-background top-0 left-0"></div>
-
+    <div className="w-full relative min-h-screen  bg-gradient-to-t from-primary to-background text-primary-foreground p-6 md:p-10 flex flex-col justify-end">
       <div className="flex justify-center mb-8 items-center relative w-full">
         <div className="p-5 bg-card rounded-full shadow-lg">
           <IconClipboardData
@@ -59,14 +57,11 @@ export default async function AttendanceHistoryPage() {
         />
 
         <div className="flex justify-center p-6 relative bottom-0 left-0 gap-4">
-          <Button asChild variant={"secondary"} size={"lg"}>
-            <Link href={"/home"}>
-              <IconChevronLeft />
-              Kembali
-            </Link>
+          <Button asChild variant={"outline"} size={"lg"}>
+            <Link href={"/home"}>Kembali</Link>
           </Button>
 
-          <Button variant={"secondary"} size={"lg"}>
+          <Button variant={"outline"} size={"lg"}>
             <CalendarSearch />
             Filter
           </Button>

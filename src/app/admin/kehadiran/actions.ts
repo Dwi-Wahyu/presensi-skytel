@@ -5,6 +5,12 @@ import * as path from "path";
 import * as XLSX from "xlsx";
 import { prisma } from "@/lib/prisma";
 import { attendanceStatusMapping } from "@/constant/attendance-status-mapping";
+import { ServerActionReturn } from "@/types/server-action";
+import { UpdateAttendanceSchemaType } from "@/validations/schemas/attendance";
+import { errorResponse, successResponse } from "@/helper/action-helpers";
+import { PrismaClientKnownRequestError } from "@/app/generated/prisma/runtime/library";
+import { format, parse } from "date-fns";
+import { formatToHour } from "@/helper/hour-helper";
 
 export async function ExportAttendanceData(startTime: Date, endTime: Date) {
   try {
@@ -35,8 +41,10 @@ export async function ExportAttendanceData(startTime: Date, endTime: Date) {
       Tanggal: record.date.toISOString().split("T")[0],
       "Nama Karyawan": record.user.name,
       Status: attendanceStatusMapping[record.status],
-      "Jam Masuk": record.clock_in_at || "-",
-      "Jam Keluar": record.clock_out_at || "-",
+      "Clock In": record.clock_in_at ? formatToHour(record.clock_in_at) : "-",
+      "Clock Out": record.clock_out_at
+        ? formatToHour(record.clock_out_at)
+        : "-",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
@@ -47,8 +55,8 @@ export async function ExportAttendanceData(startTime: Date, endTime: Date) {
       { wch: 15 }, // Kolom Tanggal (A)
       { wch: 25 }, // Kolom Nama Karyawan (B)
       { wch: 15 }, // Kolom Status (C)
-      { wch: 15 }, // Kolom Jam Masuk (D)
-      { wch: 15 }, // Kolom Jam Keluar (E)
+      { wch: 15 }, // Kolom Clock In (D)
+      { wch: 15 }, // Kolom Clock Out (E)
     ];
     worksheet["!cols"] = wscols;
 
@@ -112,5 +120,39 @@ export async function ExportAttendanceData(startTime: Date, endTime: Date) {
   } catch (error) {
     console.error("Gagal mengekspor data:", error);
     return { success: false, message: "Gagal mengekspor data." };
+  }
+}
+
+export async function updateAttendance(
+  payload: UpdateAttendanceSchemaType
+): Promise<ServerActionReturn<void>> {
+  const { id, clock_in_at, clock_out_at, ...data } = payload;
+
+  try {
+    const updated = await prisma.attendance.update({
+      where: {
+        id,
+      },
+      data: {
+        clock_in_at: clock_in_at
+          ? parse(clock_in_at, "HH:mm", new Date())
+          : null,
+        clock_out_at: clock_out_at
+          ? parse(clock_out_at, "HH:mm", new Date())
+          : null,
+        ...data,
+      },
+    });
+
+    console.log(updated);
+
+    return successResponse(undefined, "Data Karyawan berhasil diperbarui");
+  } catch (e: any) {
+    console.error(e);
+
+    return errorResponse(
+      "Terjadi kesalahan saat memperbarui kehadiran",
+      "SERVER_ERROR"
+    );
   }
 }

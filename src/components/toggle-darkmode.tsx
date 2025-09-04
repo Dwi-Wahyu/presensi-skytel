@@ -6,7 +6,6 @@ import { SunIcon, MoonIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
 export function ToggleDarkMode() {
@@ -25,6 +24,7 @@ export function ToggleDarkMode() {
       size="icon"
       onClick={handleToggle}
       aria-label="Toggle dark mode"
+      className="p-3"
     >
       {isDark ? <MoonIcon /> : <SunIcon />}
     </Button>

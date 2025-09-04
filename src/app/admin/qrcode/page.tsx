@@ -9,22 +9,6 @@ import { IconScan } from "@tabler/icons-react";
 export default async function QrcodePage() {
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
 
-  let qrCodeId;
-
-  const findExistingId = await prisma.validQRCode.findFirst();
-
-  if (!findExistingId) {
-    const createQRCodeInDb = await prisma.validQRCode.create({
-      data: {
-        id: uuidv4(),
-      },
-    });
-
-    qrCodeId = createQRCodeInDb.id;
-  } else {
-    qrCodeId = findExistingId.id;
-  }
-
   return (
     <div className="container">
       <Card className="mx-auto w-fit">
@@ -34,7 +18,7 @@ export default async function QrcodePage() {
             <h1 className="text-xl font-bold">Scan QR Code</h1>
           </div>
 
-          <QRCode value={qrCodeId} size={300} />
+          <QRCode value={ADMIN_URL + "/presensi/catat"} size={300} />
 
           <div className="mt-6">
             <RefreshButton buttonText="Refresh QR Code" />

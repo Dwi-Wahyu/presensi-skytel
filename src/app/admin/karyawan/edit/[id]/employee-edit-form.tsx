@@ -78,7 +78,7 @@ export function EditEmployeeForm({
       setIsSuccessOpen(true);
       setTimeout(() => {
         router.push("/admin/karyawan");
-      }, 1000);
+      }, 2000);
     } else {
       setErrorMessage(result.error.message);
       setIsErrorOpen(true);
