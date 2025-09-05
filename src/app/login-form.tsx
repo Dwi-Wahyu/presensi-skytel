@@ -25,9 +25,6 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { getEmployeeByUsernameAction } from "./admin/karyawan/actions";
-import { catatPresensi } from "./presensi/actions";
-import GagalPresensi from "./presensi/gagal";
-import SuksesPresensi from "./presensi/sukses";
 
 export default function LoginForm({
   className,
