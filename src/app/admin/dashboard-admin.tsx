@@ -1,8 +1,8 @@
 import DashboardCard from "../_components/dashboard-card";
 import { auth } from "@/config/auth";
 import UnauthorizedPage from "../_components/unauthorized-page";
-import { IconQrcode, IconUsers } from "@tabler/icons-react";
-import { getAllEmployee } from "./karyawan/queries";
+import { IconQrcode, IconUsers, IconUserScan } from "@tabler/icons-react";
+import { countAllEmployee, getAllEmployee } from "./karyawan/queries";
 import Link from "next/link";
 import { Mails, ScanLine, ScanText } from "lucide-react";
 import {
@@ -13,13 +13,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TopTenEmployeeChart } from "./top-ten-employee-chart";
-import { getTopTenEmployeesByAttendance } from "./kehadiran/queries";
+import {
+  getTodayAttendanceDataForDashboard,
+  getTopTenEmployeesByAttendance,
+} from "./kehadiran/queries";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { formatToHour } from "@/helper/hour-helper";
 import { AdminNotificationSection } from "./admin-notification-section";
 import { countAllNotifications, getNotifications } from "../notifikasi/queries";
+import { getPendingPermissionCount } from "./pengajuan-izin/queries";
 
 export async function DashboardAdmin() {
   const session = await auth();
@@ -28,32 +32,17 @@ export async function DashboardAdmin() {
     return <UnauthorizedPage />;
   }
 
-  const allEmployee = await getAllEmployee();
+  const employeeTotal = await countAllEmployee();
+
+  const pendingPermissionCount = await getPendingPermissionCount();
 
   const topTenEmployeeByAttendance = await getTopTenEmployeesByAttendance();
 
-  // todo: ambil attendance hari ini saja
-  const recentAttendance = await prisma.attendance.findMany({
-    take: 6,
-    where: {
-      OR: [{ clock_in_at: { not: null } }, { clock_out_at: { not: null } }],
-      date: {
-        gte: new Date(new Date().setHours(0, 0, 0, 0)),
-        lte: new Date(new Date().setHours(23, 59, 59, 999)),
-      },
-    },
-    orderBy: {
-      date: "desc",
-    },
-    include: {
-      user: {
-        select: {
-          avatar: true,
-          name: true,
-        },
-      },
-    },
-  });
+  const {
+    recentAttendanceToday,
+    notPresentEmployeeToday,
+    presentEmployeeToday,
+  } = await getTodayAttendanceDataForDashboard();
 
   const recentNotifications = await getNotifications(session.user.id, 3);
 
@@ -66,25 +55,25 @@ export async function DashboardAdmin() {
       <div className="grid mb-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
         <DashboardCard
           title="Total Karyawan"
-          value={allEmployee.length.toString()}
+          value={employeeTotal.toString()}
           icon={<IconUsers width={48} height={48} />}
         />
 
         <DashboardCard
           title="Telah Presensi"
-          value={"20"}
+          value={presentEmployeeToday.toString()}
           icon={<ScanText width={48} height={48} />}
         />
 
         <DashboardCard
           title="Belum Presensi"
-          value={"20"}
+          value={notPresentEmployeeToday.toString()}
           icon={<ScanLine width={48} height={48} />}
         />
 
         <DashboardCard
-          title="Permohonan Izin"
-          value={"4"}
+          title="Pengajuan Izin"
+          value={pendingPermissionCount.toString()}
           icon={<Mails width={48} height={48} />}
         />
       </div>
@@ -105,43 +94,52 @@ export async function DashboardAdmin() {
               </Button>
             </Link>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {recentAttendance.map((attendance, idx) => {
-              const avatarUrl = ADMIN_URL! + attendance.user.avatar;
+          {recentAttendanceToday.length !== 0 ? (
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {recentAttendanceToday.map((attendance, idx) => {
+                const avatarUrl = ADMIN_URL! + attendance.user.avatar;
 
-              return (
-                <div key={idx} className="flex gap-2 items-center">
-                  <img
-                    className="rounded-lg"
-                    src={avatarUrl}
-                    alt="User Avatar"
-                    width={50}
-                    height={50}
-                  />
+                return (
+                  <div key={idx} className="flex gap-2 items-center">
+                    <img
+                      className="rounded-lg"
+                      src={avatarUrl}
+                      alt="User Avatar"
+                      width={50}
+                      height={50}
+                    />
 
-                  <div className="">
-                    <h1 className="font-semibold">{attendance.user.name}</h1>
+                    <div className="">
+                      <h1 className="font-semibold">{attendance.user.name}</h1>
 
-                    <div className="flex gap-2">
-                      <Badge variant={"outline"}>
-                        {attendance.clock_out_at === null
-                          ? "Clock In"
-                          : "Clock Out"}
-                      </Badge>
+                      <div className="flex gap-2">
+                        <Badge variant={"outline"}>
+                          {attendance.clock_out_at === null
+                            ? "Clock In"
+                            : "Clock Out"}
+                        </Badge>
 
-                      <Badge variant={"outline"}>
-                        {attendance.clock_out_at === null ? (
-                          <>{formatToHour(attendance.clock_in_at)}</>
-                        ) : (
-                          <>{formatToHour(attendance.clock_out_at)}</>
-                        )}
-                      </Badge>
+                        <Badge variant={"outline"}>
+                          {attendance.clock_out_at === null ? (
+                            <>{formatToHour(attendance.clock_in_at)}</>
+                          ) : (
+                            <>{formatToHour(attendance.clock_out_at)}</>
+                          )}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </CardContent>
+                );
+              })}
+            </CardContent>
+          ) : (
+            <CardContent className="flex flex-col items-center justify-center p-8 text-center text-gray-500">
+              <IconUserScan className="w-16 h-16" />
+              <p className="mt-2 text-sm">
+                Belum Ada Karyawan Yang Melakukan Presensi Hari Ini.
+              </p>
+            </CardContent>
+          )}
         </Card>
       </div>
 

@@ -13,8 +13,8 @@ export default async function Layout({
     redirect("/");
   }
 
-  if (session.user.role === "prajurit") {
-    redirect("/beranda");
+  if (session.user.role === "employee") {
+    redirect("/home");
   }
 
   return <ClientAdminLayout>{children}</ClientAdminLayout>;

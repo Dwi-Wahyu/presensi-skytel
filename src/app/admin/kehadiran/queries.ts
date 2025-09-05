@@ -3,6 +3,7 @@
 import { AttendanceStatus, Prisma, Role } from "@/app/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { AttendanceSearchParamsType } from "@/validations/search-params/attendance-search-params";
+import { countAllEmployee } from "../karyawan/queries";
 
 export async function getAttendancesData(input: AttendanceSearchParamsType) {
   type AttendanceWhereClause = Prisma.AttendanceWhereInput;
@@ -12,8 +13,6 @@ export async function getAttendancesData(input: AttendanceSearchParamsType) {
       lte: new Date(new Date().setHours(23, 59, 59, 999)),
     },
   };
-
-  console.log(input.date);
 
   if (input.date) {
     attendanceWhereClause["date"] = {
@@ -125,4 +124,48 @@ export async function getTopTenEmployeesByAttendance() {
   });
 
   return result;
+}
+
+export async function getTodayAttendanceDataForDashboard() {
+  const recentAttendanceToday = await prisma.attendance.findMany({
+    take: 6,
+    where: {
+      OR: [{ clock_in_at: { not: null } }, { clock_out_at: { not: null } }],
+      date: {
+        gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        lte: new Date(new Date().setHours(23, 59, 59, 999)),
+      },
+    },
+    orderBy: {
+      date: "desc",
+    },
+    include: {
+      user: {
+        select: {
+          avatar: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  const employeeTotal = await countAllEmployee();
+
+  const presentEmployeeToday = await prisma.attendance.count({
+    where: {
+      date: {
+        gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        lte: new Date(new Date().setHours(23, 59, 59, 999)),
+      },
+      status: "ATTEND",
+    },
+  });
+
+  const notPresentEmployeeToday = employeeTotal - presentEmployeeToday;
+
+  return {
+    recentAttendanceToday,
+    presentEmployeeToday,
+    notPresentEmployeeToday,
+  };
 }

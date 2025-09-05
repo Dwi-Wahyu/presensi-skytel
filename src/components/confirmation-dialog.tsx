@@ -1,12 +1,14 @@
 import React from "react";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { IconLoader } from "@tabler/icons-react";
@@ -35,17 +37,19 @@ export function ConfirmationDialog({
   confirmButtonVariant = "secondary",
 }: ConfirmationDialogProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-card text-card-foreground border-border">
-        <DialogHeader className="flex flex-col items-center text-center">
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialogContent className="sm:max-w-[425px] bg-card text-card-foreground border-border">
+        <AlertDialogHeader className="flex flex-col items-center text-center">
           <AlertCircle className="h-8 w-8 text-secondary" />{" "}
           {/* Ikon peringatan */}
-          <DialogTitle className="text-xl font-bold mt-2">{title}</DialogTitle>
-          <DialogDescription className="text-base text-center">
+          <AlertDialogTitle className="text-xl font-bold mt-2">
+            {title}
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-base text-center">
             {message}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2">
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2">
           {" "}
           <Button variant="outline" onClick={onClose}>
             {cancelButtonText}
@@ -62,8 +66,8 @@ export function ConfirmationDialog({
               confirmButtonText
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

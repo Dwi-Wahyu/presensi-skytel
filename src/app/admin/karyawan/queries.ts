@@ -53,7 +53,16 @@ export async function getEmployeeById(id: string) {
 }
 
 export async function getAllEmployee() {
-  return await prisma.user.findMany({
+  return await prisma.user.count({
+    where: {
+      role: "employee",
+      deleted_at: null,
+    },
+  });
+}
+
+export async function countAllEmployee() {
+  return await prisma.user.count({
     where: {
       role: "employee",
       deleted_at: null,

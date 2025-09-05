@@ -38,10 +38,10 @@ export function TopTenEmployeeChart({ data }: { data: TopTenAttendanceData }) {
           </CardDescription>
         </div>
 
-        <div className="flex gap-2 items-center">
+        {/* <div className="flex gap-2 items-center">
           <Button variant={"outline"}>Bulan Ini</Button>
           <Button variant={"default"}>Keseluruhan</Button>
-        </div>
+        </div> */}
       </CardHeader>
       <CardContent className="flex gap-3 w-full">
         <div className="grid grid-cols-10 w-full place-items-end gap-5">

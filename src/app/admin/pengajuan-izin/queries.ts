@@ -59,3 +59,11 @@ export async function getPermissionById(id: number) {
     },
   });
 }
+
+export async function getPendingPermissionCount() {
+  return await prisma.permission.count({
+    where: {
+      status: "PENDING",
+    },
+  });
+}

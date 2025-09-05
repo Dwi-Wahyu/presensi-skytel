@@ -112,7 +112,7 @@ export function ChangePasswordForm() {
               )}
             />
             <div className="flex justify-end gap-2 mt-5">
-              <NavigationButton size={"lg"} url="/home" label="Batal" />
+              <NavigationButton size={"lg"} url="/home" />
               <Button type="submit" size={"lg"} disabled={isLoading}>
                 {isLoading ? (
                   <>

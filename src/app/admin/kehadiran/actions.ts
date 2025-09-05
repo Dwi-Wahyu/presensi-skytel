@@ -8,8 +8,7 @@ import { attendanceStatusMapping } from "@/constant/attendance-status-mapping";
 import { ServerActionReturn } from "@/types/server-action";
 import { UpdateAttendanceSchemaType } from "@/validations/schemas/attendance";
 import { errorResponse, successResponse } from "@/helper/action-helpers";
-import { PrismaClientKnownRequestError } from "@/app/generated/prisma/runtime/library";
-import { format, parse } from "date-fns";
+import { parse } from "date-fns";
 import { formatToHour } from "@/helper/hour-helper";
 import { revalidatePath } from "next/cache";
 

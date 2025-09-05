@@ -14,6 +14,9 @@ import { User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { NavigationButton } from "../_components/navigation-button";
+import { formatDate } from "@/helper/date-helper";
+import { formatToHour } from "@/helper/hour-helper";
+import { IconUserEdit } from "@tabler/icons-react";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -48,30 +51,61 @@ export default async function ProfilePage() {
             </AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <CardTitle className="text-3xl font-bold">
+            <CardTitle className="text-2xl font-bold">
               {user_details.name}
             </CardTitle>
             <CardDescription className="text-lg mb-3">
-              @{user_details.username}
+              {user_details.username}
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 text-sm">
             <div className="p-4 border rounded-lg">
-              <p className="font-semibold">Bergabung Sejak:</p>
-              <p>{user_details.created_at.toLocaleDateString()}</p>
+              <p className="font-semibold">Email</p>
+              {user_details.email ? (
+                <p>{user_details.email}</p>
+              ) : (
+                <p className="text-muted-foreground">Belum menetapkan email</p>
+              )}
+            </div>
+
+            <div className="p-4 border rounded-lg">
+              <p className="font-semibold">Nomor HP</p>
+              {user_details.phone_number ? (
+                <p>{user_details.phone_number}</p>
+              ) : (
+                <p className="text-muted-foreground">
+                  Belum menetapkan nomor HP
+                </p>
+              )}
+            </div>
+
+            <div className="p-4 border rounded-lg">
+              <p className="font-semibold">Akun Dibuat Pada</p>
+              <p>{formatDate(user_details.created_at)}</p>
             </div>
             {user_details.last_login && (
               <div className="p-4 border rounded-lg">
-                <p className="font-semibold">Terakhir Login:</p>
-                <p>{user_details.last_login.toLocaleString()}</p>
+                <p className="font-semibold">Terakhir Login</p>
+                <p>
+                  {formatDate(user_details.last_login)}{" "}
+                  {formatToHour(user_details.last_login)}
+                </p>
               </div>
             )}
           </div>
 
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-6 gap-2">
             <NavigationButton url="/home" size="lg" />
+
+            <NavigationButton
+              url="/profil/ubah-data"
+              size="lg"
+              variant="default"
+            >
+              <IconUserEdit /> Ubah Data
+            </NavigationButton>
           </div>
         </CardContent>
       </Card>

@@ -19,6 +19,8 @@ export const UpdateEmployeeSchema = z.object({
   name: z.string().min(1, {
     message: "Tolong isi nama.",
   }),
+  email: z.string().optional(),
+  phone_number: z.string().optional(),
 
   avatar: z.string().nullable().optional(),
 });
