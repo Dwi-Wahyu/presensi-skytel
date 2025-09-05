@@ -17,13 +17,21 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getNotifications } from "../notifikasi/queries";
 import { deleteNotification } from "../notifikasi/actions";
+import { Badge } from "@/components/ui/badge";
+import { NavigationButton } from "../_components/navigation-button";
 
 export function AdminNotificationSection({
   notifications,
   user_id,
+  total,
+  show_navigation_button = false,
+  show_all_notifications_button = false,
 }: {
   notifications: Awaited<ReturnType<typeof getNotifications>>;
   user_id: string;
+  total: number;
+  show_navigation_button?: boolean;
+  show_all_notifications_button?: boolean;
 }) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -45,14 +53,20 @@ export function AdminNotificationSection({
   };
 
   return (
-    <Card className="mt-7 mb-7">
+    <Card className="grow">
       <CardHeader>
-        <CardTitle>Notifikasi Terbaru</CardTitle>
-        <CardDescription>
-          {notifications.length > 0
-            ? "Berikut adalah notifikasi terbaru untuk Anda."
-            : "Tidak ada notifikasi terbaru saat ini."}
-        </CardDescription>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Notifikasi Terbaru</CardTitle>
+            <CardDescription>
+              {notifications.length > 0
+                ? "Berikut adalah notifikasi pengajuan terbaru untuk Anda."
+                : "Tidak ada notifikasi terbaru saat ini."}
+            </CardDescription>
+          </div>
+
+          <Badge>{total}</Badge>
+        </div>
       </CardHeader>
       <CardContent>
         {notifications.length > 0 ? (
@@ -95,6 +109,23 @@ export function AdminNotificationSection({
                 </div>
               </div>
             ))}
+
+            {show_all_notifications_button && total > 3 && (
+              <div className="flex mt-3 justify-center">
+                <Link
+                  href={"/admin/notifikasi"}
+                  className="text-center underline text-muted-foreground underline-offset-4"
+                >
+                  Lihat semua
+                </Link>
+              </div>
+            )}
+
+            {show_navigation_button && (
+              <div className="flex mt-5 justify-center">
+                <NavigationButton url="/admin" />
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-8 text-center text-gray-500">

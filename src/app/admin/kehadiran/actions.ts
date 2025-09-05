@@ -11,6 +11,7 @@ import { errorResponse, successResponse } from "@/helper/action-helpers";
 import { PrismaClientKnownRequestError } from "@/app/generated/prisma/runtime/library";
 import { format, parse } from "date-fns";
 import { formatToHour } from "@/helper/hour-helper";
+import { revalidatePath } from "next/cache";
 
 export async function ExportAttendanceData(startTime: Date, endTime: Date) {
   try {
@@ -152,6 +153,29 @@ export async function updateAttendance(
 
     return errorResponse(
       "Terjadi kesalahan saat memperbarui kehadiran",
+      "SERVER_ERROR"
+    );
+  }
+}
+
+export async function deleteAttendance(
+  id: number
+): Promise<ServerActionReturn<void>> {
+  try {
+    await prisma.attendance.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/admin/kehadiran");
+
+    return successResponse(undefined, "Kehadiran berhasil dihapus");
+  } catch (e) {
+    console.error(e);
+
+    return errorResponse(
+      "Terjadi kesalahan saat menghapus kehadiran",
       "SERVER_ERROR"
     );
   }

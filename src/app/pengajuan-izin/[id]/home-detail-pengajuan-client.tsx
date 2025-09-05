@@ -48,9 +48,7 @@ export function HomePermissionDetailPageClient({
       const result = await deletePermission(permission.id);
       if (result.success) {
         toast.success(result.message || "Pengajuan berhasil dihapus!");
-        setTimeout(() => {
-          router.push("/pengajuan-izin");
-        }, 2000);
+        router.push("/pengajuan-izin");
       } else {
         toast.error(result.error?.message || "Gagal menghapus pengajuan.");
       }
@@ -74,7 +72,7 @@ export function HomePermissionDetailPageClient({
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="">
-            <h1 className="font-semibold">Alasan</h1>
+            <h1 className="font-semibold">Perihal</h1>
             <h1 className="text-muted-foreground">{permission.reason}</h1>
           </div>
 
@@ -105,7 +103,7 @@ export function HomePermissionDetailPageClient({
                 />
               </div>
             ) : (
-              <div>tidak ada bukti</div>
+              <h1 className="text-muted-foreground italic">tidak ada bukti</h1>
             )}
           </div>
 
@@ -136,6 +134,13 @@ export function HomePermissionDetailPageClient({
             <h1 className="font-semibold">Status Pengajuan</h1>
             <h1 className="text-muted-foreground">
               {permissionStatusMapping[permission.status]}
+            </h1>
+          </div>
+
+          <div className="">
+            <h1 className="font-semibold">Alasan Ditolak</h1>
+            <h1 className="text-muted-foreground">
+              {permission.rejected_reason ?? "-"}
             </h1>
           </div>
 

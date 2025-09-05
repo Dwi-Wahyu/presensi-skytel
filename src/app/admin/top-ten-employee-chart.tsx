@@ -29,7 +29,7 @@ export function TopTenEmployeeChart({ data }: { data: TopTenAttendanceData }) {
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
 
   return (
-    <Card className="hidden md:flex">
+    <Card className="hidden md:flex mt-7">
       <CardHeader className="flex justify-between items-center flex-col md:flex-row">
         <div>
           <CardTitle>Peringkat Karyawan Paling Rajin</CardTitle>

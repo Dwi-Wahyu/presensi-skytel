@@ -18,15 +18,20 @@ import { getNotifications } from "./queries";
 import { Button } from "@/components/ui/button";
 import { NavigationButton } from "../_components/navigation-button";
 import { deleteNotification } from "./actions";
+import { Badge } from "@/components/ui/badge";
 
 export function NotificationSection({
   notifications,
   user_id,
+  total,
   show_navigation_button = false,
+  show_all_notifications_button = false,
 }: {
   notifications: Awaited<ReturnType<typeof getNotifications>>;
   user_id: string;
+  total: number;
   show_navigation_button?: boolean;
+  show_all_notifications_button?: boolean;
 }) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -50,12 +55,18 @@ export function NotificationSection({
   return (
     <Card className="mt-7">
       <CardHeader>
-        <CardTitle>Notifikasi Terbaru</CardTitle>
-        <CardDescription>
-          {notifications.length > 0
-            ? "Berikut adalah notifikasi terbaru untuk Anda."
-            : "Tidak ada notifikasi terbaru saat ini."}
-        </CardDescription>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Notifikasi Terbaru</CardTitle>
+            <CardDescription>
+              {notifications.length > 0
+                ? "Berikut adalah notifikasi terbaru untuk Anda."
+                : "Tidak ada notifikasi terbaru saat ini."}
+            </CardDescription>
+          </div>
+
+          <Badge>{total}</Badge>
+        </div>
       </CardHeader>
       <CardContent>
         {notifications.length > 0 ? (
@@ -105,6 +116,17 @@ export function NotificationSection({
             <p className="mt-2 text-sm">
               Anda belum memiliki notifikasi terbaru.
             </p>
+          </div>
+        )}
+
+        {show_all_notifications_button && total > 3 && (
+          <div className="flex mt-3 justify-center">
+            <Link
+              href={"/notifikasi"}
+              className="text-center underline text-muted-foreground underline-offset-4"
+            >
+              Lihat semua
+            </Link>
           </div>
         )}
 

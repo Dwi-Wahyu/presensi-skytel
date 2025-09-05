@@ -1,6 +1,10 @@
 "use server";
 
-import { PermissionStatus } from "@/app/generated/prisma";
+import {
+  AttendanceStatus,
+  PermissionStatus,
+  PermissionType,
+} from "@/app/generated/prisma";
 import { auth } from "@/config/auth";
 import { errorResponse, successResponse } from "@/helper/action-helpers";
 import { prisma } from "@/lib/prisma";
@@ -9,23 +13,42 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { unlinkSync } from "fs";
 import { revalidatePath } from "next/cache";
 import { join } from "path";
+import { getClockInTime, getClockOutTime } from "../pengaturan/queries";
 
 export async function approvePermission(
   permission_id: number,
   user_id: string
 ): Promise<ServerActionReturn<void>> {
   try {
-    const approvedPermission = await prisma.permission.update({
+    const permission = await prisma.permission.findUnique({
       where: {
         id: permission_id,
-        status: PermissionStatus.PENDING,
-      },
-      data: {
-        status: PermissionStatus.APPROVED,
-        reason: "",
       },
       select: {
         user_id: true,
+        type: true,
+        date_start: true,
+        date_end: true,
+      },
+    });
+
+    if (!permission) {
+      return errorResponse("Pengajuan izin tidak ditemukan.", "NOT_FOUND");
+    }
+
+    const approvedPermission = await prisma.permission.update({
+      where: {
+        id: permission_id,
+      },
+      data: {
+        status: PermissionStatus.APPROVED,
+        rejected_reason: null,
+      },
+      select: {
+        user_id: true,
+        type: true,
+        date_start: true,
+        date_end: true,
       },
     });
 
@@ -35,28 +58,81 @@ export async function approvePermission(
         sender_id: user_id,
         title: "Permohonan Izin Disetujui",
         message:
-          "Selamat, permohonan izin Anda telah disetujui oleh administrator.",
+          "Selamat, pengajuan izin Anda telah disetujui oleh administrator.",
         resource_path: `/pengajuan-izin/${permission_id}`,
       },
     });
 
+    const clockInTime = await getClockInTime();
+    const clockOutTime = await getClockOutTime();
+
+    let currentDate = new Date(approvedPermission.date_start);
+    const endDate = new Date(approvedPermission.date_end);
+
+    while (currentDate <= endDate) {
+      const attendanceDate = new Date(currentDate);
+      const attendanceData: any = {
+        user_id: approvedPermission.user_id,
+        date: attendanceDate,
+      };
+
+      switch (approvedPermission.type) {
+        case PermissionType.FULL:
+          attendanceData.status = AttendanceStatus.EXCUSED;
+          break;
+
+        case PermissionType.LATE:
+          if (clockInTime) {
+            const [hours, minutes] = clockInTime.value.split(":").map(Number);
+            const newDate = new Date(attendanceDate);
+            newDate.setHours(hours, minutes, 0, 0);
+            attendanceData.clock_in_at = newDate;
+          }
+          attendanceData.status = AttendanceStatus.ABSENT;
+          break;
+
+        case PermissionType.EARLY_LEAVE:
+          if (clockOutTime) {
+            const [hours, minutes] = clockOutTime.value.split(":").map(Number);
+            const newDate = new Date(attendanceDate);
+            newDate.setHours(hours, minutes, 0, 0);
+            attendanceData.clock_out_at = newDate;
+          }
+          attendanceData.status = AttendanceStatus.ABSENT;
+          break;
+      }
+
+      await prisma.attendance.upsert({
+        where: {
+          date_user_id: {
+            date: attendanceDate,
+            user_id: approvedPermission.user_id,
+          },
+        },
+        update: attendanceData,
+        create: attendanceData,
+      });
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
     revalidatePath("/admin/pengajuan-izin/" + permission_id);
 
-    return successResponse(undefined, "Permohonan izin berhasil disetujui.");
+    return successResponse(undefined, "Pengajuan izin berhasil disetujui.");
   } catch (e: any) {
     console.error("Error approving permission:", e);
 
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
         return errorResponse(
-          "Permohonan izin tidak ditemukan atau sudah diproses.",
+          "Pengajuan izin tidak ditemukan atau sudah diproses.",
           "NOT_FOUND"
         );
       }
     }
 
     return errorResponse(
-      "Terjadi kesalahan saat menyetujui permohonan izin: " + e.message,
+      "Terjadi kesalahan saat menyetujui pengajuan izin: " + e.message,
       "SERVER_ERROR"
     );
   }
@@ -71,10 +147,10 @@ export async function rejectPermission(
     const rejectedPermission = await prisma.permission.update({
       where: {
         id: permission_id,
-        status: PermissionStatus.PENDING,
       },
       data: {
         status: PermissionStatus.REJECTED,
+        rejected_reason: reason,
       },
       select: {
         user_id: true,
@@ -82,7 +158,7 @@ export async function rejectPermission(
     });
 
     let notificationMessage =
-      "Mohon maaf, permohonan izin Anda telah ditolak oleh administrator.";
+      "Mohon maaf, pengajuan izin Anda telah ditolak oleh administrator.";
     if (reason) {
       notificationMessage += ` Alasan: ${reason}`;
     }
@@ -97,21 +173,21 @@ export async function rejectPermission(
       },
     });
 
-    return successResponse(undefined, "Permohonan izin berhasil ditolak.");
+    return successResponse(undefined, "Pengajuan izin berhasil ditolak.");
   } catch (e: any) {
     console.error("Error rejecting permission:", e);
 
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
         return errorResponse(
-          "Permohonan izin tidak ditemukan atau sudah diproses.",
+          "Pengajuan izin tidak ditemukan atau sudah diproses.",
           "NOT_FOUND"
         );
       }
     }
 
     return errorResponse(
-      "Terjadi kesalahan saat menolak permohonan izin: " + e.message,
+      "Terjadi kesalahan saat menolak pengajuan izin: " + e.message,
       "SERVER_ERROR"
     );
   }
@@ -160,7 +236,7 @@ export async function deletePermission(
         sender_id: session.user.id,
         title: "Pengajuan Dihapus",
         message:
-          "Mohon maaf, permohonan izin Anda telah dihapus oleh administrator.",
+          "Mohon maaf, pengajuan izin Anda telah dihapus oleh administrator.",
         resource_path: null,
       },
     });
@@ -178,7 +254,7 @@ export async function deletePermission(
     }
 
     return errorResponse(
-      "Terjadi kesalahan saat menghapus permohonan izin: " + e.message,
+      "Terjadi kesalahan saat menghapus pengajuan izin: " + e.message,
       "SERVER_ERROR"
     );
   }

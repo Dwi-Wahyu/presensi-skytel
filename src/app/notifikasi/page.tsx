@@ -32,6 +32,7 @@ export default async function EmployeeNotificationPage() {
           notifications={notifications}
           user_id={session.user.id}
           show_navigation_button={true}
+          total={notifications.length}
         />
       </div>
     </div>

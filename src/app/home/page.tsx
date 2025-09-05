@@ -4,7 +4,7 @@ import { HomeNavSection } from "./home-nav-section";
 import UnauthorizedPage from "../_components/unauthorized-page";
 import { WorkDurationChart } from "./work-duration-chart";
 import { NotificationSection } from "../notifikasi/notification-section";
-import { getNotifications } from "../notifikasi/queries";
+import { countAllNotifications, getNotifications } from "../notifikasi/queries";
 import { ToggleDarkMode } from "@/components/toggle-darkmode";
 import { getWorkDurationData } from "./queries";
 
@@ -18,6 +18,8 @@ export default async function Home() {
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
 
   const recentNotifications = await getNotifications(session.user.id, 3);
+
+  const totalNotifications = await countAllNotifications(session.user.id);
 
   const workDurationData = await getWorkDurationData(session.user.id);
 
@@ -51,7 +53,9 @@ export default async function Home() {
 
         <NotificationSection
           notifications={recentNotifications}
+          total={totalNotifications}
           user_id={session.user.id}
+          show_all_notifications_button={true}
         />
 
         <WorkDurationChart data={workDurationData} />

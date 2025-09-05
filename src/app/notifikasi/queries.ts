@@ -18,3 +18,11 @@ export async function getNotifications(recipient_id: string, take?: number) {
     },
   });
 }
+
+export async function countAllNotifications(recipient_id: string) {
+  return await prisma.notification.count({
+    where: {
+      recipient_id,
+    },
+  });
+}

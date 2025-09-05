@@ -19,7 +19,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { formatToHour } from "@/helper/hour-helper";
 import { AdminNotificationSection } from "./admin-notification-section";
-import { getNotifications } from "../notifikasi/queries";
+import { countAllNotifications, getNotifications } from "../notifikasi/queries";
 
 export async function DashboardAdmin() {
   const session = await auth();
@@ -30,18 +30,17 @@ export async function DashboardAdmin() {
 
   const allEmployee = await getAllEmployee();
 
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date();
-  end.setHours(23, 59, 59, 999);
-
   const topTenEmployeeByAttendance = await getTopTenEmployeesByAttendance();
 
+  // todo: ambil attendance hari ini saja
   const recentAttendance = await prisma.attendance.findMany({
     take: 6,
     where: {
       OR: [{ clock_in_at: { not: null } }, { clock_out_at: { not: null } }],
+      date: {
+        gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        lte: new Date(new Date().setHours(23, 59, 59, 999)),
+      },
     },
     orderBy: {
       date: "desc",
@@ -56,7 +55,9 @@ export async function DashboardAdmin() {
     },
   });
 
-  const recentNotifications = await getNotifications(session.user.id, 5);
+  const recentNotifications = await getNotifications(session.user.id, 3);
+
+  const totalNotifications = await countAllNotifications(session.user.id);
 
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
 
@@ -88,16 +89,7 @@ export async function DashboardAdmin() {
         />
       </div>
 
-      <div className="flex flex-col md:flex-row w-full gap-6 mb-6 items-stretch">
-        <Link
-          className="flex flex-col gap-2 justify-center w-full border items-center bg-gradient-to-tr from-primary to-primary/60 p-10 md:w-fit rounded-2xl hover:scale-105  duration-300 transition-all ease-in-out shadow-lg text-white"
-          href={"/admin/qrcode"}
-        >
-          <h1 className="font-semibold text-lg">Tampilkan QR Code</h1>
-          <IconQrcode className="w-16 h-16" />
-          <h1 className="text-sm">Untuk Mencatat Kehadiran</h1>
-        </Link>
-
+      <div className="flex flex-col md:flex-row w-full mb-7">
         <Card className="grow">
           <CardHeader className="flex justify-between">
             <div>
@@ -153,7 +145,23 @@ export async function DashboardAdmin() {
         </Card>
       </div>
 
-      <AdminNotificationSection notifications={recentNotifications} />
+      <div className="flex flex-col md:flex-row w-full gap-6 mb-7 items-stretch">
+        <Link
+          className="flex min-w-[25vw] flex-col gap-2 justify-center w-full border items-center bg-gradient-to-tr from-primary to-primary/60 p-10 md:w-fit rounded-2xl hover:scale-105  duration-300 transition-all ease-in-out shadow-lg text-white"
+          href={"/admin/qrcode"}
+        >
+          <h1 className="font-semibold text-lg">Tampilkan QR Code</h1>
+          <IconQrcode className="w-16 h-16" />
+          <h1 className="text-sm">Untuk Mencatat Kehadiran</h1>
+        </Link>
+
+        <AdminNotificationSection
+          notifications={recentNotifications}
+          user_id={session.user.id}
+          total={totalNotifications}
+          show_all_notifications_button
+        />
+      </div>
 
       <TopTenEmployeeChart data={topTenEmployeeByAttendance} />
     </div>

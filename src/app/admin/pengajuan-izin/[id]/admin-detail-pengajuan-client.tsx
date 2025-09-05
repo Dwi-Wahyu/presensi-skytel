@@ -30,6 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "nextjs-toploader/app";
 
 export function PermissionDetailPageClient({
   permission,
@@ -39,6 +40,8 @@ export function PermissionDetailPageClient({
   user_id: string;
 }) {
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
+
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
@@ -52,6 +55,7 @@ export function PermissionDetailPageClient({
 
     const result = await approvePermission(permission.id, user_id);
     if (result.success) {
+      router.refresh();
       toast.success(result.message);
     } else {
       toast.error(result.error?.message);
@@ -61,12 +65,14 @@ export function PermissionDetailPageClient({
 
   const handleReject = async () => {
     setIsLoading(true);
+
     const result = await rejectPermission(
       permission.id,
       user_id,
       rejectionReason || "Tidak ada alasan."
     );
     if (result.success) {
+      router.refresh();
       toast.success(result.message);
       setRejectionReason("");
     } else {
@@ -87,7 +93,7 @@ export function PermissionDetailPageClient({
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="">
-            <h1 className="font-semibold">Alasan</h1>
+            <h1 className="font-semibold">Perihal</h1>
             <h1 className="text-muted-foreground">{permission.reason}</h1>
           </div>
 
@@ -149,6 +155,13 @@ export function PermissionDetailPageClient({
             <h1 className="font-semibold">Status Pengajuan</h1>
             <h1 className="text-muted-foreground">
               {permissionStatusMapping[permission.status]}
+            </h1>
+          </div>
+
+          <div className="">
+            <h1 className="font-semibold">Alasan Ditolak</h1>
+            <h1 className="text-muted-foreground">
+              {permission.rejected_reason ?? "-"}
             </h1>
           </div>
 

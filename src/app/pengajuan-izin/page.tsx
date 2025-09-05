@@ -57,7 +57,8 @@ export default async function PermissionPage() {
 
                 <div className="">
                   <h1 className="font-semibold text-sm">{permission.reason}</h1>
-                  {permission.date_start !== permission.date_end ? (
+                  {formatDateToYYYYMMDD(permission.date_start) !==
+                  formatDateToYYYYMMDD(permission.date_end) ? (
                     <h1 className="text-sm">
                       {formatDateToYYYYMMDD(permission.date_start)} -{" "}
                       {formatDateToYYYYMMDD(permission.date_end)}

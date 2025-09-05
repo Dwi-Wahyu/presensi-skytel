@@ -42,7 +42,7 @@ import {
   IconCalendar,
 } from "@tabler/icons-react";
 import { FileUploadImage } from "@/app/_components/file-upload-image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NotificationDialog } from "@/components/notification-dialog";
 import {
   InputPermissionSchema,
@@ -51,7 +51,7 @@ import {
 
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { addDays, differenceInDays, format, isBefore } from "date-fns";
 import { createPermission, uploadProof } from "../actions";
 import { id } from "date-fns/locale";
 import {
@@ -59,6 +59,7 @@ import {
   NavigationButton,
 } from "@/app/_components/navigation-button";
 import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export function CreatePermissionForm({
   user_id,
@@ -84,30 +85,43 @@ export function CreatePermissionForm({
 
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
-  const [isErrorOpen, setIsErrorOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(
-    "Terjadi kesalahan saat mengajukan izin. Silakan coba lagi."
-  );
+
+  const watchHari = form.watch("days_count");
+  const watchDateStart = form.watch("date_start");
+  const watchDateEnd = form.watch("date_end");
+
+  useEffect(() => {
+    if (!watchHari) return;
+
+    const baseDate = watchDateStart ? new Date(watchDateStart) : new Date();
+
+    const nextDateEnd =
+      watchHari === 1 ? baseDate : addDays(baseDate, watchHari - 1);
+
+    if (
+      !watchDateEnd ||
+      differenceInDays(nextDateEnd, new Date(watchDateEnd)) !== 0
+    ) {
+      form.setValue("date_end", nextDateEnd);
+    }
+  }, [watchHari, watchDateStart, watchDateEnd, form]);
 
   const onSubmit = async (payload: InputPermissionSchemaType) => {
     setIsLoading(true);
+
     if (files.length > 0) {
       payload.proof = await uploadProof(files[0], payload.user_id);
     }
 
     const result = await createPermission(payload, sender_name);
 
-    setIsSuccessOpen(true);
-
     if (result.success) {
-      setIsSuccessOpen(true);
-      setTimeout(() => {
-        router.push("/pengajuan-izin");
-      }, 2000);
+      toast.success(result.message || "Permohonan izin berhasil diajukan.");
+      router.push("/pengajuan-izin");
     } else {
-      setErrorMessage(result.error.message);
-      setIsErrorOpen(true);
+      toast.error("Gagal mengajukan izin!", {
+        description: "result.error.message",
+      });
     }
 
     setIsLoading(false);
@@ -115,22 +129,6 @@ export function CreatePermissionForm({
 
   return (
     <div className="w-full flex justify-center">
-      <NotificationDialog
-        isOpen={isSuccessOpen}
-        onClose={() => setIsSuccessOpen(false)}
-        title="Aksi Berhasil!"
-        message="Permohonan izin berhasil diajukan."
-        variant="success"
-      />
-
-      <NotificationDialog
-        isOpen={isErrorOpen}
-        onClose={() => setIsErrorOpen(false)}
-        title="Gagal mengajukan izin!"
-        message={errorMessage}
-        variant="error"
-      />
-
       <Card className="w-full relative max-w-xl shadow-none">
         <Button
           className="top-6 hidden md:inline-flex absolute -left-14"
@@ -158,10 +156,10 @@ export function CreatePermissionForm({
                 name="reason"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Alasan</FormLabel>
+                    <FormLabel>Perihal</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Alasan mengajukan izin"
+                        placeholder="Perihal mengajukan izin"
                         {...field}
                       />
                     </FormControl>
@@ -178,12 +176,17 @@ export function CreatePermissionForm({
                     <FormLabel>Jumlah Hari</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
                         placeholder="1"
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(parseInt(e.target.value))
-                        }
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value, 10);
+                          if (isNaN(val) || val < 1) {
+                            field.onChange(1);
+                          } else {
+                            field.onChange(val);
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -225,7 +228,7 @@ export function CreatePermissionForm({
                   name="date_start"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Tanggal Mulai</FormLabel>
+                      <FormLabel>Tanggal {watchHari > 1 && "Mulai"}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -238,7 +241,7 @@ export function CreatePermissionForm({
                               disabled={isLoading}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                format(field.value, "PPP", { locale: id })
                               ) : (
                                 <span>Pilih tanggal</span>
                               )}
@@ -260,46 +263,51 @@ export function CreatePermissionForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="date_end"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Tanggal Berakhir</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                              disabled={isLoading}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pilih tanggal</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) => date < new Date() || isLoading}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
+                {watchHari > 1 && (
+                  <FormField
+                    control={form.control}
+                    name="date_end"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Tanggal Berakhir</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "pl-3 text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                                disabled
+                              >
+                                {field.value ? (
+                                  format(field.value, "PPP", { locale: id })
+                                ) : (
+                                  <span>Pilih tanggal</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date < new Date() || isLoading
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
 
               <div className="w-full">

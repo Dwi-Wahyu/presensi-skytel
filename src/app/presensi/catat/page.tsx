@@ -1,15 +1,14 @@
 import { auth } from "@/config/auth";
 import { redirect } from "next/navigation";
-import { catatPresensi } from "./queries";
 import SuksesPresensi from "../sukses";
 import GagalPresensi from "../gagal";
+import { catatPresensi } from "./actions";
+import UnauthorizedPage from "@/app/_components/unauthorized-page";
 
 export default async function CatatPresensiPage() {
   const session = await auth();
 
-  if (!session) {
-    redirect("/");
-  }
+  if (!session) return <UnauthorizedPage />;
 
   const catat = await catatPresensi(session.user.id);
 

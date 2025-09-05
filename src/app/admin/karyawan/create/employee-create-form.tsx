@@ -53,7 +53,7 @@ export function CreateEmployeeForm() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState(
-    "Terjadi kesalahan saat menyimpan data prajurit. Silakan coba lagi."
+    "Terjadi kesalahan saat menyimpan data karyawan. Silakan coba lagi."
   );
 
   const onSubmit = async (payload: InputEmployeeSchemaType) => {

@@ -29,6 +29,10 @@ export const TabelPermissionColumns: ColumnDef<PermissionColumnType>[] = [
     header: "Nama",
   },
   {
+    accessorKey: "reason",
+    header: "Perihal",
+  },
+  {
     header: "Jumlah Hari",
     cell: function Cell({ row }) {
       return <div>{row.original.days_count}</div>;
