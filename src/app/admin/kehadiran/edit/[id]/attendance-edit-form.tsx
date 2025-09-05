@@ -35,6 +35,7 @@ import { formatDate, formatDateToYYYYMMDD } from "@/helper/date-helper";
 import { updateAttendance } from "../../actions";
 import Link from "next/link";
 import { IconChevronLeft } from "@tabler/icons-react";
+import { NavigationButton } from "@/app/_components/navigation-button";
 
 export function AttendanceEditForm({
   initialData,
@@ -217,12 +218,7 @@ export function AttendanceEditForm({
               />
 
               <div className="flex justify-end gap-2">
-                <Button asChild variant={"outline"}>
-                  <Link href={"/admin/kehadiran"}>
-                    <IconChevronLeft />
-                    Kembali
-                  </Link>
-                </Button>
+                <NavigationButton url="/admin/kehadiran" />
 
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? (

@@ -128,18 +128,24 @@ export async function updateAttendance(
 ): Promise<ServerActionReturn<void>> {
   const { id, clock_in_at, clock_out_at, ...data } = payload;
 
+  const parsed_clock_out_at =
+    clock_out_at && clock_out_at !== "-"
+      ? parse(clock_out_at, "HH:mm", new Date())
+      : null;
+
+  const parsed_clock_in_at =
+    clock_in_at && clock_in_at !== "-"
+      ? parse(clock_in_at, "HH:mm", new Date())
+      : null;
+
   try {
     const updated = await prisma.attendance.update({
       where: {
         id,
       },
       data: {
-        clock_in_at: clock_in_at
-          ? parse(clock_in_at, "HH:mm", new Date())
-          : null,
-        clock_out_at: clock_out_at
-          ? parse(clock_out_at, "HH:mm", new Date())
-          : null,
+        clock_in_at: parsed_clock_in_at,
+        clock_out_at: parsed_clock_out_at,
         ...data,
       },
     });

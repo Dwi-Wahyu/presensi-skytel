@@ -1,6 +1,6 @@
 import { PageTitle } from "@/app/_components/page-title";
 import { Card, CardContent } from "@/components/ui/card";
-import { SettingClient } from "./setting-client";
+import { SettingEditForm } from "./setting-edit-form";
 import { IconSettings } from "@tabler/icons-react";
 import { getAllAppSettings } from "./queries";
 
@@ -30,14 +30,14 @@ export default async function SettingPage() {
   } = settingsMap;
 
   return (
-    <Card className="mx-auto w-2xl">
+    <Card className="mx-auto w-xl">
       <CardContent className="flex flex-col  gap-6">
         <div className="inline-flex justify-center items-center gap-1">
           <IconSettings />
           <PageTitle title="Pengaturan Aplikasi" />
         </div>
 
-        <SettingClient
+        <SettingEditForm
           CLOCK_IN_TIME={CLOCK_IN_TIME}
           CLOCK_OUT_TIME={CLOCK_OUT_TIME}
           MINIMUM_LATE_THRESHOLD={MINIMUM_LATE_THRESHOLD}
