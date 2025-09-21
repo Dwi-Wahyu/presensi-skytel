@@ -38,3 +38,31 @@ export async function getClockOutTime() {
     },
   });
 }
+
+export async function getOfficeLatitude() {
+  const value = await prisma.appSettings.findFirst({
+    where: {
+      key: "OFFICE_LATITUDE",
+    },
+  });
+
+  if (!value) {
+    return 0;
+  }
+
+  return Number(value.value);
+}
+
+export async function getOfficeLongitude() {
+  const value = await prisma.appSettings.findFirst({
+    where: {
+      key: "OFFICE_LONGITUDE",
+    },
+  });
+
+  if (!value) {
+    return 0;
+  }
+
+  return Number(value.value);
+}

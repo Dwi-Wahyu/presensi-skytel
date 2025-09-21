@@ -66,10 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="pb-10 pt-4">
         <Scroller orientation={"vertical"} hideScrollbar>
           <NavMain items={menu.navMain} />
-
-          <div className="md:flex hidden  w-full justify-center">
-            <SidebarTrigger />
-          </div>
         </Scroller>
       </SidebarContent>
     </Sidebar>

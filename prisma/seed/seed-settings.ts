@@ -47,5 +47,27 @@ export async function seedSettings() {
     },
   });
 
+  await prisma.appSettings.upsert({
+    where: { key: "OFFICE_LATITUDE" },
+    update: {
+      value: "-5.143034164300227",
+    },
+    create: {
+      key: "OFFICE_LATITUDE",
+      value: "-5.143034164300227",
+    },
+  });
+
+  await prisma.appSettings.upsert({
+    where: { key: "OFFICE_LONGITUDE" },
+    update: {
+      value: "119.48064904974403",
+    },
+    create: {
+      key: "OFFICE_LONGITUDE",
+      value: "119.48064904974403",
+    },
+  });
+
   console.log("Seeding AppSettings selesai!");
 }

@@ -1,40 +1,35 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { IconClipboardData, IconHome, IconX } from "@tabler/icons-react";
+import { MapPinOff } from "lucide-react";
 import Link from "next/link";
 
-export default function GagalPresensi({ reason }: { reason: string }) {
+export default async function LocationNotSupportedPage() {
   return (
     <div className="w-full relative min-h-svh bg-destructive p-6 md:p-10 flex flex-col justify-center">
-      <div className="flex w-full justify-between absolute top-0 left-0 p-6">
-        <Button variant={"outline"} size={"lg"}>
-          <Link href={"/home"}>
-            <IconHome />
-          </Link>
-        </Button>
-        <Button asChild variant={"outline"} size={"lg"}>
-          <Link href={"/presensi/history"}>
-            <IconClipboardData />
-          </Link>
-        </Button>
-      </div>
-
       <Card className=" shadow-lg">
         <CardContent className="flex flex-col justify-center">
-          <h1 className="text-2xl font-semibold text-center">
-            Gagal Mencatat Presensi
+          <h1 className="text-xl mb-1 font-semibold text-center">
+            Terjadi Kesalahan
           </h1>
-          <h1 className="text-center">{reason}</h1>
+          <h1 className="text-center text-muted-foreground text-sm">
+            Pembacaan Lokasi Tidak Didukung Oleh Perangkat Anda, Silakan Hubungi
+            Administrator atau Coba Izinkan Penggunaan Lokasi
+          </h1>
 
-          <div className="flex justify-center items-center w-full mt-4">
+          <div className="flex justify-center items-center w-full mt-5 mb-6">
             <div className="p-5 bg-destructive rounded-full shadow-lg">
-              <IconX
+              <MapPinOff
                 width={100}
                 height={100}
                 className="text-destructive-foreground"
               />
             </div>
           </div>
+
+          <Button variant={"outline"} size={"lg"} className="w-fit self-center">
+            <Link href={"/home"}>Kembali Ke Beranda</Link>
+          </Button>
         </CardContent>
       </Card>
     </div>

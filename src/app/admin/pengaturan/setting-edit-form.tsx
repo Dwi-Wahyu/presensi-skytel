@@ -30,6 +30,8 @@ type Props = {
   OVERTIME_THRESHOLD: string;
   CLOCK_IN_TIME: string;
   CLOCK_OUT_TIME: string;
+  OFFICE_LATITUDE: string;
+  OFFICE_LONGITUDE: string;
 };
 
 export function SettingEditForm({
@@ -37,6 +39,8 @@ export function SettingEditForm({
   OVERTIME_THRESHOLD,
   CLOCK_IN_TIME,
   CLOCK_OUT_TIME,
+  OFFICE_LATITUDE,
+  OFFICE_LONGITUDE,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -47,6 +51,8 @@ export function SettingEditForm({
       OVERTIME_THRESHOLD: Number(OVERTIME_THRESHOLD),
       CLOCK_IN_TIME,
       CLOCK_OUT_TIME,
+      OFFICE_LATITUDE,
+      OFFICE_LONGITUDE,
     },
   });
 
@@ -200,6 +206,42 @@ export function SettingEditForm({
                     Menit
                   </span>
                 </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="OFFICE_LATITUDE"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Latitude Kantor</FormLabel>
+              <FormControl>
+                <Input
+                  disabled={!isEditing}
+                  placeholder="-5.143034164300227"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="OFFICE_LONGITUDE"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Longitude Kantor</FormLabel>
+              <FormControl>
+                <Input
+                  disabled={!isEditing}
+                  placeholder="119.48064904974403"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

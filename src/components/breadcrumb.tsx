@@ -47,7 +47,7 @@ export function BreadCrumbs() {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList className="h-8 bg-sidebar gap-2 rounded-md border px-3 text-sm">
+      <BreadcrumbList className="h-10 gap-2 rounded-md border px-3 text-sm">
         {breadcrumbs.map((item, index) => {
           const IconComponent = getIconForLabel(item.label);
 

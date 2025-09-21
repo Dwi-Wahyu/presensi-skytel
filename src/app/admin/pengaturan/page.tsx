@@ -9,6 +9,8 @@ type AppSettings = {
   CLOCK_OUT_TIME: string;
   MINIMUM_LATE_THRESHOLD: string;
   OVERTIME_THRESHOLD: string;
+  OFFICE_LATITUDE: string;
+  OFFICE_LONGITUDE: string;
 };
 
 export default async function SettingPage() {
@@ -27,6 +29,8 @@ export default async function SettingPage() {
     CLOCK_OUT_TIME,
     MINIMUM_LATE_THRESHOLD,
     OVERTIME_THRESHOLD,
+    OFFICE_LATITUDE,
+    OFFICE_LONGITUDE,
   } = settingsMap;
 
   return (
@@ -42,6 +46,8 @@ export default async function SettingPage() {
           CLOCK_OUT_TIME={CLOCK_OUT_TIME}
           MINIMUM_LATE_THRESHOLD={MINIMUM_LATE_THRESHOLD}
           OVERTIME_THRESHOLD={OVERTIME_THRESHOLD}
+          OFFICE_LATITUDE={OFFICE_LATITUDE}
+          OFFICE_LONGITUDE={OFFICE_LONGITUDE}
         />
       </CardContent>
     </Card>

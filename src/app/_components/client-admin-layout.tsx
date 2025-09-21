@@ -21,7 +21,7 @@ export default function ClientAdminLayout({
       <main className=" w-full">
         <div className="flex p-3 px-4 border-b-[1px] border-b-sidebar justify-between items-center w-full">
           <div className="flex gap-1 items-center">
-            <SidebarTrigger className="block md:hidden" />
+            <SidebarTrigger />
 
             <BreadCrumbs />
           </div>

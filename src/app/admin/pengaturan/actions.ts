@@ -14,6 +14,8 @@ export async function updateSettings(
       CLOCK_OUT_TIME,
       MINIMUM_LATE_THRESHOLD,
       OVERTIME_THRESHOLD,
+      OFFICE_LATITUDE,
+      OFFICE_LONGITUDE,
     } = payload;
 
     await prisma.appSettings.update({
@@ -49,6 +51,24 @@ export async function updateSettings(
       },
       data: {
         value: OVERTIME_THRESHOLD.toString(),
+      },
+    });
+
+    await prisma.appSettings.update({
+      where: {
+        key: "OFFICE_LATITUDE",
+      },
+      data: {
+        value: OFFICE_LATITUDE,
+      },
+    });
+
+    await prisma.appSettings.update({
+      where: {
+        key: "OFFICE_LONGITUDE",
+      },
+      data: {
+        value: OFFICE_LONGITUDE,
       },
     });
 

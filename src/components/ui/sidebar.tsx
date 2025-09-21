@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, VariantProps } from "class-variance-authority";
-import { ChevronLeft } from "lucide-react";
+import { Maximize, Minimize } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -288,13 +288,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <ChevronLeft
-        // Kondisional kelas untuk rotasi
-        className={cn(
-          "h-4 w-4 transition-transform duration-300 ease-in-out", // Kelas transisi
-          !open && "rotate-180" // Jika `open` adalah `false`, putar ikon 180 derajat
-        )}
-      />
+      {open ? <Minimize /> : <Maximize />}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { IconClipboardData, IconLogout, IconScan } from "@tabler/icons-react";
+import { IconCalendarClock, IconClipboardData } from "@tabler/icons-react";
 import { Mail } from "lucide-react";
 import Link from "next/link";
 
@@ -28,20 +28,20 @@ export function HomeNavSection() {
 
       <Link
         className="hover:scale-105 transition-all ease-in-out duration-300 overflow-hidden shadow-lg bg-gradient-to-tr from-primary to-primary/60 w-full relative rounded-xl  p-5"
-        href={"/scanner"}
+        href={"/presensi/catat"}
       >
         <div className="w-full pr-20 text-background">
-          <h1 className="text-lg font-semibold">Scanner</h1>
-          <h1 className="text-sm">Scanner QR Code Untuk Mencatat Kehadiran</h1>
+          <h1 className="text-lg font-semibold">Clock In / Clock Out</h1>
+          <h1 className="text-sm">Catat Presensi Anda Hari Ini</h1>
           <Button
             variant={"link"}
             className="mt-2 bg-transparent p-0 underline underline-offset-2 text-background"
           >
-            Tampilkan Scanner
+            Catat Presensi
           </Button>
         </div>
 
-        <IconScan className="absolute -right-9 -top-5 w-36 h-36 text-background" />
+        <IconCalendarClock className="absolute -right-8 -top-4 w-36 h-36 text-background" />
       </Link>
 
       <Link

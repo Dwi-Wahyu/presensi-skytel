@@ -7,6 +7,7 @@ import { NotificationSection } from "../notifikasi/notification-section";
 import { countAllNotifications, getNotifications } from "../notifikasi/queries";
 import { ToggleDarkMode } from "@/components/toggle-darkmode";
 import { getWorkDurationData } from "./queries";
+import { CurrentLocation } from "./current-location";
 
 export default async function Home() {
   const session = await auth();
@@ -50,6 +51,8 @@ export default async function Home() {
         </div>
 
         <HomeNavSection />
+
+        <CurrentLocation />
 
         <NotificationSection
           notifications={recentNotifications}
