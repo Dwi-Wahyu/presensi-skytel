@@ -38,7 +38,28 @@ model User {
   received_notifications Notification[] @relation("ReceivedNotifications")
   sent_notifications     Notification[] @relation("SentNotifications")
 
+  division_lead Division[] @relation("division_to_leader")
+
+  division Division? @relation(name: "division_to_member", fields: [division_id], references: [id])
+  division_id String?
+
   @@map("user")
+}
+
+model Division {
+  id         String    @id @default(uuid())
+  name       String
+
+  users User[] @relation("division_to_member")
+
+  leader User? @relation(name: "division_to_leader", fields: [leader_id], references: [id])
+  leader_id String?
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@map("division")
 }
 
 model Notification {

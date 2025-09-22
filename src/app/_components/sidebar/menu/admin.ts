@@ -1,4 +1,5 @@
 import {
+  IconBrandTeams,
   IconClipboardData,
   IconQrcode,
   IconSettings,
@@ -18,6 +19,11 @@ export const adminMenu = {
       title: "Data Karyawan",
       url: "/admin/karyawan",
       icon: IconUsers,
+    },
+    {
+      title: "Divisi",
+      url: "/admin/divisi",
+      icon: IconBrandTeams,
     },
     {
       title: "Data Kehadiran",

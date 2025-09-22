@@ -29,6 +29,13 @@ export default async function ProfilePage() {
     where: {
       id: session.user.id,
     },
+    include: {
+      division: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   if (!user_details) {
@@ -77,6 +84,17 @@ export default async function ProfilePage() {
               ) : (
                 <p className="text-muted-foreground">
                   Belum menetapkan nomor HP
+                </p>
+              )}
+            </div>
+
+            <div className="p-4 border rounded-lg">
+              <p className="font-semibold">Divisi</p>
+              {user_details.division ? (
+                <p>{user_details.division.name}</p>
+              ) : (
+                <p className="text-muted-foreground">
+                  Belum ditetapkan divisi apapun
                 </p>
               )}
             </div>
